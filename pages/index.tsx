@@ -3,15 +3,8 @@ import { Sidebar } from '../components/Sidebar';
 
 export default function Home() {
     return (
-        <div className="">
-            <Head>
-                <title>Spotify.js</title>
-                {/* <link rel="icon" href="/favicon.ico" /> */}
-            </Head>
-
-            <h1>Spotify</h1>
-
-            <main className="flex">
+        <div className="bg-black h-screen overflow-hidden">
+            <main className="">
                 <Sidebar />
                 {/* center */}
             </main>
