@@ -67,11 +67,11 @@ export default NextAuth({
         },
 
         async session({ session, token }) {
-            //@ts-ignore
+            //@ts-ignore // `accessToken` exists in user obj
             session.user.accessToken = token.accessToken;
-            //@ts-ignore
+            //@ts-ignore // `refreshToken` exists in user obj
             session.user.refreshToken = token.refreshToken;
-            //@ts-ignore
+            //@ts-ignore // `username` exists in user obj
             session.user.username = token.username;
 
             return session;
