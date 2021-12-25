@@ -35,18 +35,20 @@ const Login = ({
                     SIGN UP FREE
                 </button>
 
-                {Object.values(providers).map((provider) => (
-                    <div key={provider.name}>
-                        <button
-                            className="text-black p-3 bg-white rounded-full w-52 hover:bg-gray-300 transition ease-in duration-150 hover:scale-105 mb-6 text-sm"
-                            onClick={() =>
-                                signIn(provider.id, { callbackUrl: '/' })
-                            }
-                        >
-                            LOGIN WITH {provider.name.toUpperCase()}
-                        </button>
-                    </div>
-                ))}
+                {Object.values(providers).map(
+                    (provider: ClientSafeProvider) => (
+                        <div key={provider.name}>
+                            <button
+                                className="text-black p-3 bg-white rounded-full w-52 hover:bg-gray-300 transition ease-in duration-150 hover:scale-105 mb-6 text-sm"
+                                onClick={() =>
+                                    signIn(provider.id, { callbackUrl: '/' })
+                                }
+                            >
+                                LOGIN WITH {provider.name.toUpperCase()}
+                            </button>
+                        </div>
+                    )
+                )}
 
                 <span className="text-white text-xs cursor-pointer">
                     SETTINGS

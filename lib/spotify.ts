@@ -10,7 +10,7 @@ const scopes: string = [
     'user-library-read',
     'user-top-read',
     'user-read-playback-state',
-    'user-read-currently-state',
+    'user-modify-playback-state',
     'user-read-currently-playing',
     'user-read-recently-played',
     'user-follow-read',
