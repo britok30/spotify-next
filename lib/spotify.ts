@@ -16,7 +16,9 @@ const scopes: string = [
     'user-follow-read',
 ].join(',');
 
-const params = {
+const params: {
+    scope: string;
+} = {
     scope: scopes,
 };
 
