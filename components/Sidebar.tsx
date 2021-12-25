@@ -10,6 +10,8 @@ import {
 } from '@heroicons/react/outline';
 import { signOut, useSession } from 'next-auth/react';
 import useSpotify from '../hooks/useSpotify';
+import { playlistIdState } from '../atoms/playlistAtom';
+import { useRecoilState } from 'recoil';
 
 export const Sidebar = () => {
     const spotifyApi = useSpotify();
@@ -17,6 +19,7 @@ export const Sidebar = () => {
     const [playlists, setPlaylists] = useState<
         SpotifyApi.PlaylistObjectSimplified[]
     >([]);
+    const [playlistId, setPlaylistId] = useRecoilState(playlistIdState);
 
     useEffect(() => {
         if (spotifyApi.getAccessToken()) {
@@ -27,12 +30,10 @@ export const Sidebar = () => {
         }
     }, [session, spotifyApi]);
 
-    if (playlists) {
-        console.log(playlists);
-    }
+    console.log(playlistId);
 
     return (
-        <div className="text-gray-500 p-5 w-56 text-sm border-r border-gray-900 overflow-y-scroll h-screen scrollbar-hide">
+        <div className="text-gray-500 p-5 text-xs lg:text-sm border-r border-gray-900 overflow-y-scroll h-screen scrollbar-hide sm:max-w-[12rem] lg:max-w-[15rem] hidden md:inline-flex">
             <div className="space-y-4">
                 <button
                     className="flex items-center space-x-2 hover:text-white transition duration-150 ease-in"
@@ -72,6 +73,7 @@ export const Sidebar = () => {
                         <p
                             key={playlist.id}
                             className="cursor-pointer hover:text-white transition duration-150 ease-in"
+                            onClick={() => setPlaylistId(playlist.id)}
                         >
                             {playlist.name}
                         </p>
