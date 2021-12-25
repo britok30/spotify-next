@@ -56,7 +56,7 @@ const Login = ({
                     )
                 )}
 
-                <span className="text-white text-xs cursor-pointer">
+                <span className="text-white text-xs cursor-pointer hover:underline">
                     SETTINGS
                 </span>
             </div>
