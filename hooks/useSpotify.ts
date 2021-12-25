@@ -17,7 +17,7 @@ const useSpotify = () => {
         }
 
         //@ts-ignore // accessToken exists in user obj
-        spotifyApi.setAccessToken(session.user.accessToken);
+        spotifyApi.setAccessToken(session?.user.accessToken);
     }, [session]);
 
     return spotifyApi;
