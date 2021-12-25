@@ -65,5 +65,16 @@ export default NextAuth({
             // Access token has expired, so we refresh it
             return await refreshAccessToken(token);
         },
+
+        async session({ session, token }) {
+            //@ts-ignore
+            session.user.accessToken = token.accessToken;
+            //@ts-ignore
+            session.user.refreshToken = token.refreshToken;
+            //@ts-ignore
+            session.user.username = token.username;
+
+            return session;
+        },
     },
 });
