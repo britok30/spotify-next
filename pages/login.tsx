@@ -16,14 +16,14 @@ const Login = ({
     >;
 }) => {
     return (
-        <div className="bg-black h-screen overflow-hidden flex items-center justify-center bg-[url('/images/login-hero.jpg')] bg-cover bg-no-repeat bg-opacity-10">
+        <div className="bg-black min-h-screen w-full overflow-hidden flex items-center justify-center bg-[url('/images/login-hero.jpg')] bg-cover bg-no-repeat bg-opacity-10">
             <div className="flex justify-center items-center flex-col bg-black rounded-lg p-10 w-96">
-                <div className="mb-3 motion-safe:animate-pulse">
+                <div className="mb-3">
                     <Image
                         src="/images/spotify.png"
                         alt="Spotify"
-                        width={100}
-                        height={100}
+                        width={50}
+                        height={50}
                     />
                 </div>
 
@@ -37,7 +37,12 @@ const Login = ({
 
                 {Object.values(providers).map((provider) => (
                     <div key={provider.name}>
-                        <button className="text-black p-3 bg-white rounded-full w-52 hover:bg-gray-300 transition ease-in duration-150 hover:scale-105 mb-6 text-sm">
+                        <button
+                            className="text-black p-3 bg-white rounded-full w-52 hover:bg-gray-300 transition ease-in duration-150 hover:scale-105 mb-6 text-sm"
+                            onClick={() =>
+                                signIn(provider.id, { callbackUrl: '/' })
+                            }
+                        >
                             LOGIN WITH {provider.name.toUpperCase()}
                         </button>
                     </div>
