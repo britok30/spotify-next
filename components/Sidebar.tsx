@@ -60,17 +60,19 @@ export const Sidebar = () => {
                 </button>
                 <hr className="border-t-[0.1px] border-gray-900" />
 
-                {playlists.map((playlist) => {
-                    return (
-                        <p
-                            key={playlist.id}
-                            className="cursor-pointer hover:text-white transition duration-150 ease-in"
-                            onClick={() => setPlaylistId(playlist.id)}
-                        >
-                            {playlist.name}
-                        </p>
-                    );
-                })}
+                <>
+                    {playlists.map((playlist) => {
+                        return (
+                            <p
+                                key={playlist.id}
+                                className="cursor-pointer hover:text-white transition duration-150 ease-in"
+                                onClick={() => setPlaylistId(playlist.id)}
+                            >
+                                {playlist.name}
+                            </p>
+                        );
+                    })}
+                </>
             </div>
         </div>
     );
