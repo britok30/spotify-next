@@ -1,4 +1,9 @@
-import { ChevronDownIcon } from '@heroicons/react/outline';
+import {
+    ArrowCircleDownIcon,
+    ChevronDownIcon,
+    DotsHorizontalIcon,
+    PlayIcon,
+} from '@heroicons/react/outline';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 import { shuffle } from 'lodash';
@@ -78,6 +83,15 @@ const Main = () => {
                 <PlaylistDetails playlist={playlist} session={session} />
             </section>
 
+            <div className="hidden md:flex md:items-center space-x-8 px-7 mb-5">
+                <div className="bg-green-500 h-16 w-16 rounded-full flex justify-center items-center cursor-pointer hover:scale-105 transition duration-150 ease-in">
+                    <PlayIcon className="h-10 w-10" />
+                </div>
+
+                <ArrowCircleDownIcon className="h-10 w-10 cursor-pointer hover:scale-105 transition duration-150 ease-in" />
+                <DotsHorizontalIcon className="h-10 w-10 cursor-pointer hover:scale-105 transition duration-150 ease-in" />
+            </div>
+
             <div>
                 <Songs />
             </div>
@@ -105,8 +119,8 @@ const UserTag = ({
                 alt="profile image"
             />
 
-            <h2>{session?.user.name}</h2>
-            <ChevronDownIcon className="w-5 h-5" />
+            <h2 className="text-sm">{session?.user.name}</h2>
+            <ChevronDownIcon className="w-3 h-3" />
         </div>
     );
 };
