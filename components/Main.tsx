@@ -74,7 +74,6 @@ const Main = () => {
     console.log('playlist ', playlist);
 
     const playPlaylist = () => {
-        setIsPlaying(true);
         spotifyApi.play({
             context_uri: playlist.uri,
         });
