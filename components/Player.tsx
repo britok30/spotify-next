@@ -1,3 +1,4 @@
+import { HeartIcon } from '@heroicons/react/outline';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -35,13 +36,20 @@ const Player = () => {
     }, [currentTrackIdState, spotifyApi, session]);
 
     return (
-        <div className="w-full flex justify-between items-center">
-            <div>
+        <div className="h-24 bg-gradient-to-b from-black to-gray-900 flex items-center grid grid-cols-3 text-xs px-2 md:px-8 text-white">
+            <div className="flex items-center space-x-4">
                 <img
-                    className="hidden md:inline h-10 w-10 rounded"
+                    className="hidden md:inline h-16 w-16 rounded"
                     src={songInfo?.album?.images?.[0]?.url}
                     alt="song-album-art"
                 />
+                <div>
+                    <h3 className="text-sm">{songInfo?.name}</h3>
+                    <p className="text-gray-500">
+                        {songInfo?.artists?.[0]?.name}
+                    </p>
+                </div>
+                <HeartIcon className="h-5 w-5" />
             </div>
         </div>
     );
