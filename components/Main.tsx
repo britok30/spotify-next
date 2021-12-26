@@ -11,7 +11,7 @@ import Songs from './Songs';
 const Main = () => {
     const { data: session } = useSession();
     const spotifyApi = useSpotify();
-    const [color, setColor] = useState<string[] | null>(null);
+    const [color, setColor] = useState<string | null>(null);
     const playlistId = useRecoilValue(playlistIdState);
     const [playlist, setPlaylist] = useRecoilState(playlistState);
 
@@ -29,7 +29,7 @@ const Main = () => {
                     }: { body: SpotifyApi.SinglePlaylistResponse } = data;
                     setPlaylist(body);
                 })
-                .catch((e) => console.log(e));
+                .catch((e: string) => console.log(e));
         }
     }, [spotifyApi, playlistId]);
 
