@@ -18,7 +18,7 @@ const Song = ({ order, track }: { order: number; track: Track }) => {
             uris: [track.uri],
         });
     };
-    console.log('track uri', track.uri);
+
     return (
         <div
             className="grid grid-cols-2 text-gray-500 hover:bg-gray-900 rounded-lg transition duration-150 ease-in py-4 px-5 cursor-pointer"

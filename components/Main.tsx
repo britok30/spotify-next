@@ -2,9 +2,8 @@ import {
     ArrowCircleDownIcon,
     ChevronDownIcon,
     DotsHorizontalIcon,
-    PauseIcon,
-    PlayIcon,
 } from '@heroicons/react/outline';
+import { PauseIcon, PlayIcon } from '@heroicons/react/solid';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 import { shuffle } from 'lodash';
@@ -15,7 +14,7 @@ import Songs from './Songs';
 import LogoutMenu from './LogoutMenu';
 import useComponentVisible from '../hooks/useComponentVisible';
 import { Session } from 'next-auth';
-import { isPlayingState } from '../atoms/songAtom';
+import { currentTrackIdState, isPlayingState } from '../atoms/songAtom';
 import UserTag from './UserTag';
 import PlaylistDetails from './PlaylistDetails';
 
@@ -27,6 +26,7 @@ const Main = () => {
     const [playlist, setPlaylist] = useRecoilState(playlistState);
     const { ref, isComponentVisible, setIsComponentVisible } =
         useComponentVisible(false);
+
     const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
 
     const colors: string[] = [
@@ -71,11 +71,18 @@ const Main = () => {
                 .catch((e: string) => console.log(e));
         }
     }, [spotifyApi, playlistId]);
-    console.log('playlist ', playlist);
 
-    const playPlaylist = () => {
-        spotifyApi.play({
-            context_uri: playlist.uri,
+    const playPlaylist: () => void = () => {
+        spotifyApi.getMyCurrentPlaybackState().then((data) => {
+            if (data.body.is_playing) {
+                spotifyApi.pause();
+                setIsPlaying(false);
+            } else {
+                spotifyApi.play({
+                    context_uri: playlist.uri,
+                });
+                setIsPlaying(true);
+            }
         });
     };
 
@@ -96,13 +103,13 @@ const Main = () => {
 
             <div className="hidden md:flex md:items-center space-x-8 px-7 mb-5">
                 <div
-                    className="bg-green-500 h-16 w-16 rounded-full flex justify-center items-center cursor-pointer hover:scale-105 transition duration-150 ease-in"
+                    className="h-16 w-16 rounded-full flex justify-center items-center cursor-pointer hover:scale-105 transition duration-150 ease-in"
                     onClick={playPlaylist}
                 >
                     {isPlaying ? (
-                        <PauseIcon className="h-10 w-10" />
+                        <PauseIcon className="h-16 w-16 fill-[#18D860]" />
                     ) : (
-                        <PlayIcon className="h-10 w-10" />
+                        <PlayIcon className="h-16 w-16 fill-[#18D860]" />
                     )}
                 </div>
 

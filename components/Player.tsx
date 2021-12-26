@@ -1,4 +1,16 @@
-import { HeartIcon } from '@heroicons/react/outline';
+import {
+    HeartIcon,
+    SwitchHorizontalIcon,
+    VolumeUpIcon as VolumeDownIcon,
+} from '@heroicons/react/outline';
+import {
+    PlayIcon,
+    PauseIcon,
+    RewindIcon,
+    ReplyIcon,
+    FastForwardIcon,
+    VolumeUpIcon,
+} from '@heroicons/react/solid';
 import { useSession } from 'next-auth/react';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -9,7 +21,7 @@ import useSpotify from '../hooks/useSpotify';
 const Player = () => {
     const spotifyApi = useSpotify();
     const { data: session, status } = useSession();
-    const [currentTrackId, setCurrentIdTrack] =
+    const [currentTrackId, setCurrentTrackId] =
         useRecoilState(currentTrackIdState);
 
     const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
@@ -19,7 +31,7 @@ const Player = () => {
     const fetchCurrentSong = () => {
         if (!songInfo) {
             spotifyApi.getMyCurrentPlayingTrack().then((data) => {
-                setCurrentIdTrack(data.body?.item?.id);
+                setCurrentTrackId(data.body?.item?.id);
 
                 spotifyApi.getMyCurrentPlaybackState().then((data) => {
                     setIsPlaying(data.body?.is_playing);
@@ -33,10 +45,22 @@ const Player = () => {
             fetchCurrentSong();
             setVolume(50);
         }
-    }, [currentTrackIdState, spotifyApi, session]);
+    }, [currentTrackId, spotifyApi, session]);
+
+    const handlePlayPause = () => {
+        spotifyApi.getMyCurrentPlaybackState().then((data) => {
+            if (data.body.is_playing) {
+                spotifyApi.pause();
+                setIsPlaying(false);
+            } else {
+                spotifyApi.play();
+                setIsPlaying(true);
+            }
+        });
+    };
 
     return (
-        <div className="h-24 bg-gradient-to-b from-black to-gray-900 flex items-center grid grid-cols-3 text-xs px-2 md:px-8 text-white">
+        <div className="h-24 bg-gradient-to-b from-black to-gray-900 items-center grid grid-cols-3 text-xs px-2 md:px-8 text-white">
             <div className="flex items-center space-x-4">
                 <img
                     className="hidden md:inline h-16 w-16 rounded"
@@ -50,6 +74,40 @@ const Player = () => {
                     </p>
                 </div>
                 <HeartIcon className="h-5 w-5" />
+            </div>
+
+            <div className="flex items-center justify-evenly">
+                <SwitchHorizontalIcon className="player-button" />
+                <RewindIcon className="player-button" />
+                {isPlaying ? (
+                    <PauseIcon
+                        onClick={handlePlayPause}
+                        className="playpause-button w-14 h-14"
+                    />
+                ) : (
+                    <PlayIcon
+                        onClick={handlePlayPause}
+                        className="playpause-button w-14 h-14"
+                    />
+                )}
+
+                <FastForwardIcon className="player-button" />
+                <ReplyIcon className="player-button" />
+            </div>
+
+            <div className="flex items-center space-x-3 md:space-x-4 justify-end">
+                <VolumeDownIcon className="player-button" />
+                <input
+                    className="w-14 md:w-28"
+                    type="range"
+                    value={volume}
+                    min={0}
+                    max={100}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        Number(e.target.value);
+                    }}
+                />
+                <VolumeUpIcon className="player-button" />
             </div>
         </div>
     );

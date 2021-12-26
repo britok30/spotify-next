@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.player-button {
+    @apply w-5 h-5 cursor-pointer hover:scale-125 transition transform duration-150 ease-in;
+}
+
+.playpause-button {
+    @apply w-10 h-10 cursor-pointer hover:scale-125 transition transform duration-150 ease-in;
+}
