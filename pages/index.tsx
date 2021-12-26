@@ -3,7 +3,7 @@ import Main from '../components/Main';
 import Player from '../components/Player';
 import { Sidebar } from '../components/Sidebar';
 
-export const Home = () => {
+const Home = () => {
     return (
         <div className="bg-black h-screen overflow-hidden">
             <main className="flex">
@@ -16,6 +16,8 @@ export const Home = () => {
         </div>
     );
 };
+
+export default Home;
 
 export const getServerSideProps = async (context: GetSessionParams) => {
     const session = await getSession(context);
