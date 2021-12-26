@@ -87,7 +87,7 @@ const Player = () => {
                         {songInfo?.artists?.[0]?.name}
                     </p>
                 </div>
-                <HeartIcon className="h-5 w-5" />
+                <HeartIcon className=" hidden md:inline h-5 w-5" />
             </div>
 
             <div className="flex items-center justify-evenly">
