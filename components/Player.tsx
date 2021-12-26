@@ -11,8 +11,9 @@ import {
     FastForwardIcon,
     VolumeUpIcon,
 } from '@heroicons/react/solid';
+import { debounce } from 'lodash';
 import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentTrackIdState, isPlayingState } from '../atoms/songAtom';
 import useSongInfo from '../hooks/useSongInfo';
@@ -45,7 +46,13 @@ const Player = () => {
             fetchCurrentSong();
             setVolume(50);
         }
-    }, [currentTrackId, spotifyApi, session]);
+    }, [currentTrackIdState, spotifyApi, session]);
+
+    useEffect(() => {
+        if (volume > 0 && volume < 100) {
+            debouncedAdjustVolume(volume);
+        }
+    });
 
     const handlePlayPause = () => {
         spotifyApi.getMyCurrentPlaybackState().then((data) => {
@@ -58,6 +65,13 @@ const Player = () => {
             }
         });
     };
+
+    const debouncedAdjustVolume = useCallback(
+        debounce((volume: number) => {
+            spotifyApi.setVolume(volume).catch((err) => {});
+        }, 500),
+        [volume]
+    );
 
     return (
         <div className="h-24 bg-gradient-to-b from-black to-gray-900 items-center grid grid-cols-3 text-xs px-2 md:px-8 text-white">
@@ -96,18 +110,24 @@ const Player = () => {
             </div>
 
             <div className="flex items-center space-x-3 md:space-x-4 justify-end">
-                <VolumeDownIcon className="player-button" />
+                <VolumeDownIcon
+                    className="player-button"
+                    onClick={() => volume > 0 && setVolume(volume - 10)}
+                />
                 <input
                     className="w-14 md:w-28"
                     type="range"
                     value={volume}
                     min={0}
                     max={100}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        Number(e.target.value);
-                    }}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setVolume(Number(e.target.value))
+                    }
                 />
-                <VolumeUpIcon className="player-button" />
+                <VolumeUpIcon
+                    className="player-button"
+                    onClick={() => volume < 100 && setVolume(volume + 10)}
+                />
             </div>
         </div>
     );
