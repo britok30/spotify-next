@@ -1,8 +1,7 @@
 import { ChevronDownIcon } from '@heroicons/react/outline';
-import { useSession } from 'next-auth/react';
-import React, { useEffect, useState } from 'react';
+import { signOut, useSession } from 'next-auth/react';
+import React, { useEffect, useRef, useState } from 'react';
 import { shuffle } from 'lodash';
-import { colors } from '../lib/colors';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { playlistIdState, playlistState } from '../atoms/playlistAtom';
 import useSpotify from '../hooks/useSpotify';
@@ -14,8 +13,37 @@ const Main = () => {
     const [color, setColor] = useState<string | null>(null);
     const playlistId = useRecoilValue(playlistIdState);
     const [playlist, setPlaylist] = useRecoilState(playlistState);
+    const [isMenuOpen, setMenuOpen] = useState<boolean>(false);
+
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    const colors: string[] = [
+        'from-indigo-500',
+        'from-slate-500',
+        'from-gray-500',
+        'from-zinc-500',
+        'from-blue-500',
+        'from-red-500',
+        'from-pink-500',
+        'from-purple-500',
+        'from-green-500',
+        'from-neutral-500',
+        'from-stone-500',
+        'from-orange-500',
+        'from-amber-500',
+        'from-yellow-500',
+        'from-lime-500',
+        'from-emerald-500',
+        'from-teal-500',
+        'from-cyan-500',
+        'from-sky-500',
+        'from-violet-500',
+        'from-fuchsia-500',
+        'from-rose-500',
+    ];
 
     useEffect(() => {
+        const random = Math.floor(Math.random() * colors.length);
         setColor(shuffle(colors).pop());
     }, [playlistId]);
 
@@ -33,10 +61,26 @@ const Main = () => {
         }
     }, [spotifyApi, playlistId]);
 
+    const handleClickOutside = (event: any) => {
+        if (menuRef.current && !menuRef.current.contains(event.target)) {
+            setMenuOpen(true);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside, false);
+        return () => {
+            document.removeEventListener('click', handleClickOutside, false);
+        };
+    }, []);
+
     return (
         <div className="flex-grow text-white h-screen overflow-y-scroll scrollbar-hide">
             <header className="absolute top-5 right-8">
-                <div className="flex items-center bg-black space-x-3 opacity-90 hover:opacity-80 transition duration-150 ease-in cursor-pointer rounded-full p-1 pr-2">
+                <div
+                    className="flex items-center bg-black space-x-3 opacity-90 hover:opacity-80 transition duration-150 ease-in cursor-pointer rounded-full p-1 pr-2"
+                    onClick={() => signOut()}
+                >
                     <img
                         className="rounded-full w-10 h-10"
                         src={session?.user.image}
