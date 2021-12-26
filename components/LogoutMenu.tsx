@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { signOut } from 'next-auth/react';
 
-const LogoutMenu = ({ ref }) => {
+const LogoutMenu = forwardRef<HTMLDivElement>((props, ref) => {
     return (
         <div
             ref={ref}
-            className="w-44  mt-5 rounded-lg bg-gray-800 text-gray-500"
+            className="w-44  mt-5 rounded-lg bg-gray-800 text-gray-500 shadow-2xl"
         >
             <div className="pl-3 py-2 rounded-lg hover:cursor-pointer hover:text-white hover:bg-gray-900 transition duration-150 ease-in text-sm">
                 Account
@@ -31,5 +31,5 @@ const LogoutMenu = ({ ref }) => {
             </div>
         </div>
     );
-};
+});
 export default LogoutMenu;

@@ -6,6 +6,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { playlistIdState, playlistState } from '../atoms/playlistAtom';
 import useSpotify from '../hooks/useSpotify';
 import Songs from './Songs';
+import LogoutMenu from './LogoutMenu';
+import useComponentVisible from '../hooks/useComponentVisible';
 
 const Main = () => {
     const { data: session } = useSession();
@@ -13,9 +15,8 @@ const Main = () => {
     const [color, setColor] = useState<string | null>(null);
     const playlistId = useRecoilValue(playlistIdState);
     const [playlist, setPlaylist] = useRecoilState(playlistState);
-    const [isMenuOpen, setMenuOpen] = useState<boolean>(false);
-
-    const menuRef = useRef<HTMLDivElement>(null);
+    const { ref, isComponentVisible, setIsComponentVisible } =
+        useComponentVisible(false);
 
     const colors: string[] = [
         'from-indigo-500',
@@ -43,7 +44,6 @@ const Main = () => {
     ];
 
     useEffect(() => {
-        const random = Math.floor(Math.random() * colors.length);
         setColor(shuffle(colors).pop());
     }, [playlistId]);
 
@@ -61,25 +61,12 @@ const Main = () => {
         }
     }, [spotifyApi, playlistId]);
 
-    const handleClickOutside = (event: any) => {
-        if (menuRef.current && !menuRef.current.contains(event.target)) {
-            setMenuOpen(true);
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('click', handleClickOutside, false);
-        return () => {
-            document.removeEventListener('click', handleClickOutside, false);
-        };
-    }, []);
-
     return (
         <div className="flex-grow text-white h-screen overflow-y-scroll scrollbar-hide">
             <header className="absolute top-5 right-8">
                 <div
                     className="flex items-center bg-black space-x-3 opacity-90 hover:opacity-80 transition duration-150 ease-in cursor-pointer rounded-full p-1 pr-2"
-                    onClick={() => signOut()}
+                    onClick={() => setIsComponentVisible(true)}
                 >
                     <img
                         className="rounded-full w-10 h-10"
@@ -90,6 +77,7 @@ const Main = () => {
                     <h2>{session?.user.name}</h2>
                     <ChevronDownIcon className="w-5 h-5" />
                 </div>
+                {isComponentVisible && <LogoutMenu ref={ref} />}
             </header>
 
             <section
