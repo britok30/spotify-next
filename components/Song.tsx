@@ -1,49 +1,282 @@
-import React from 'react';
-import { useRecoilState } from 'recoil';
-import { currentTrackIdState, isPlayingState } from '../atoms/songAtom';
-import useSpotify from '../hooks/useSpotify';
-import { millisToMinutesAndSeconds } from '../lib/time';
-import { Track } from '../types/types';
+"use client";
 
-const Song = ({ order, track }: { order: number; track: Track }) => {
-    const spotifyApi = useSpotify();
-    const [currentTrackId, setCurrentTrackId] =
-        useRecoilState(currentTrackIdState);
-    const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
+import React, { useState, useEffect, useCallback } from "react";
+import { Play, Pause, Heart, MoreHorizontal, Music, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { useSpotifyContext } from "@/contexts/SpotifyContext";
+import type { Track } from "@spotify/web-api-ts-sdk";
 
-    const playSong = () => {
-        setCurrentTrackId(track.id);
-        setIsPlaying(true);
-        spotifyApi.play({
-            uris: [track.uri],
-        });
-    };
+interface SongProps {
+  order: number;
+  track: Track;
+}
 
-    return (
-        <div
-            className="grid grid-cols-2 text-gray-500 hover:bg-gray-900 rounded-lg transition duration-150 ease-in py-4 px-5 cursor-pointer"
-            onClick={playSong}
-        >
-            <div className="flex items-center space-x-4">
-                <p>{order + 1}</p>
-                <img
-                    className="h-10 w-10 rounded"
-                    src={track.album.images[0].url}
-                    alt="track-img"
-                />
-                <div className="text-sm">
-                    <p className="w-36 lg:w-64 truncate text-white">
-                        {track.name}
-                    </p>
-                    <p className="w-40">{track.artists[0].name}</p>
-                </div>
+const Song = ({ order, track }: SongProps) => {
+  const {
+    spotifyApi,
+    isAuthenticated,
+    currentTrackId,
+    setCurrentTrackId,
+    isPlaying,
+    setIsPlaying,
+    fetchCurrentTrack,
+    makeSpotifyRequest,
+    getActiveDevice,
+  } = useSpotifyContext();
+
+  const [isHovered, setIsHovered] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+
+  const isCurrentTrack = currentTrackId === track.id;
+  const showPlayButton = isHovered || isCurrentTrack;
+
+  const formatDuration = (ms: number) => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+
+  const handlePlay = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!spotifyApi) return;
+
+    // Get device ID from context
+    const deviceId = await getActiveDevice();
+    if (!deviceId) {
+      alert("No active Spotify device found. Please open Spotify on a device.");
+      return;
+    }
+
+    // Immediate UI feedback
+    if (isCurrentTrack && isPlaying) {
+      setIsPlaying(false);
+    } else {
+      setCurrentTrackId(track.id);
+      setIsPlaying(true);
+    }
+
+    try {
+      if (isCurrentTrack && isPlaying) {
+        await makeSpotifyRequest((api) => api.player.pausePlayback(deviceId));
+      } else {
+        await makeSpotifyRequest((api) =>
+          api.player.startResumePlayback(deviceId, undefined, [track.uri])
+        );
+      }
+      // Longer delay to avoid rate limits and let Spotify update
+      setTimeout(fetchCurrentTrack, 1500);
+    } catch (error) {
+      console.error("Error playing track:", error);
+
+      // Handle rate limiting
+      if (error.status === 429) {
+        console.log("Rate limited, will retry in 2 seconds");
+        setTimeout(fetchCurrentTrack, 2000);
+      } else {
+        // Revert UI state if API call failed
+        setIsPlaying(false);
+      }
+    }
+  };
+
+  const handleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (!spotifyApi) return;
+
+    // Immediate UI feedback
+    const newLikedState = !isLiked;
+    setIsLiked(newLikedState);
+
+    try {
+      if (isLiked) {
+        await spotifyApi.currentUser.tracks.removeSavedTracks([track.id]);
+      } else {
+        await spotifyApi.currentUser.tracks.saveTracks([track.id]);
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+
+      // Handle rate limiting
+      if (error.status === 429) {
+        console.log("Rate limited, like action failed");
+        // Revert UI state
+        setIsLiked(isLiked);
+        return;
+      }
+
+      // Revert UI state for other errors
+      setIsLiked(isLiked);
+    }
+  };
+
+  const handleAddToQueue = async () => {
+    if (!spotifyApi) return;
+
+    const deviceId = await getActiveDevice();
+    if (!deviceId) return;
+
+    try {
+      await makeSpotifyRequest((api) =>
+        api.player.addItemToPlaybackQueue(track.uri, deviceId)
+      );
+    } catch (error) {
+      console.error("Error adding to queue:", error);
+    }
+  };
+
+  // Don't render if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  return (
+    <div
+      className={cn(
+        "group grid grid-cols-[16px_4fr_2fr_minmax(120px,_1fr)] gap-4 items-center px-4 py-2 rounded-md transition-colors cursor-pointer",
+        "hover:bg-white/5",
+        isCurrentTrack && "bg-white/10"
+      )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={handlePlay}
+    >
+      {/* Track Number / Play Button */}
+      <div className="flex items-center justify-center w-4">
+        {showPlayButton ? (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-4 w-4 p-0 text-white hover:scale-110 transition-transform"
+            onClick={handlePlay}
+          >
+            {isCurrentTrack && isPlaying ? (
+              <Pause className="h-4 w-4 fill-current" />
+            ) : (
+              <Play className="h-4 w-4 fill-current" />
+            )}
+          </Button>
+        ) : (
+          <span
+            className={cn(
+              "text-sm",
+              isCurrentTrack ? "text-[#18D860]" : "text-gray-400"
+            )}
+          >
+            {order + 1}
+          </span>
+        )}
+      </div>
+
+      {/* Track Info */}
+      <div className="flex items-center space-x-3 min-w-0">
+        <div className="relative group/image">
+          {track.album?.images?.[0]?.url ? (
+            <img
+              className="h-10 w-10 rounded object-cover"
+              src={track.album.images[0].url}
+              alt={`${track.name} cover`}
+            />
+          ) : (
+            <div className="h-10 w-10 rounded bg-gray-800 flex items-center justify-center">
+              <Music className="h-4 w-4 text-gray-600" />
             </div>
-            <div className="flex items-center justify-between ml-auto md:ml-0  text-sm">
-                <p className="w-40 hidden md:inline">{track.album.name}</p>
-                <p>{millisToMinutesAndSeconds(track.duration_ms)}</p>
-            </div>
+          )}
         </div>
-    );
+
+        <div className="min-w-0 flex-1">
+          <p
+            className={cn(
+              "text-sm font-medium truncate",
+              isCurrentTrack ? "text-[#18D860]" : "text-white"
+            )}
+          >
+            {track.name}
+          </p>
+          <p className="text-sm text-gray-400 truncate">
+            {track.artists?.map((artist) => artist.name).join(", ")}
+          </p>
+        </div>
+      </div>
+
+      {/* Album Name */}
+      <div className="hidden md:block min-w-0">
+        <p className="text-sm text-gray-400 truncate hover:text-white hover:underline cursor-pointer">
+          {track.album?.name}
+        </p>
+      </div>
+
+      {/* Actions & Duration */}
+      <div className="flex items-center justify-end space-x-2">
+        <Button
+          size="icon"
+          variant="ghost"
+          className={cn(
+            "h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity",
+            isLiked
+              ? "text-[#18D860] opacity-100"
+              : "text-gray-400 hover:text-white"
+          )}
+          onClick={handleLike}
+        >
+          <Heart className={cn("h-4 w-4", isLiked && "fill-current")} />
+        </Button>
+
+        <span
+          className={cn(
+            "text-sm tabular-nums",
+            isCurrentTrack ? "text-[#18D860]" : "text-gray-400"
+          )}
+        >
+          {formatDuration(track.duration_ms)}
+        </span>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-8 w-8 text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="bg-gray-800 border-gray-700"
+            align="end"
+          >
+            <DropdownMenuItem
+              className="text-white hover:bg-gray-700"
+              onClick={handleAddToQueue}
+            >
+              Add to queue
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-white hover:bg-gray-700">
+              Go to song radio
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-white hover:bg-gray-700">
+              Add to playlist
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-white hover:bg-gray-700">
+              Show credits
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-white hover:bg-gray-700">
+              Share
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  );
 };
 
 export default Song;
