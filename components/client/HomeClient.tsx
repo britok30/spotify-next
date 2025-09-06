@@ -58,7 +58,7 @@ const HomeClient = () => {
             )}
           </Button>
           
-          <span className="text-white font-bold text-lg">Spotify Clone</span>
+          <span className="text-white font-bold text-lg">Spotify</span>
           
           <div className="md:hidden">
             <UserDropdownMenu />
