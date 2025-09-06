@@ -31,7 +31,7 @@ const SidebarButton = ({
   </Button>
 );
 
-export const Sidebar = () => {
+export const Sidebar = ({ onMobileNavClick }: { onMobileNavClick?: () => void } = {}) => {
   const {
     spotifyApi,
     isAuthenticated,
@@ -83,12 +83,15 @@ export const Sidebar = () => {
       setCurrentPlaylistId(id);
       setCurrentPlaylist(null); // Clear current playlist to show loading
     }
+    if (onMobileNavClick) {
+      onMobileNavClick();
+    }
   };
 
   // Show connect prompt if not authenticated
   if (!isAuthenticated) {
     return (
-      <div className=" flex-col h-screen w-64 bg-black border-r border-gray-800 text-white hidden md:flex">
+      <div className="flex flex-col h-screen w-64 bg-black border-r border-gray-800 text-white">
         {/* Main Navigation */}
         <div className="p-6">
           <div className="flex items-center space-x-2 mb-8">
@@ -124,7 +127,7 @@ export const Sidebar = () => {
   }
 
   return (
-    <div className="flex-col h-screen w-64 bg-black border-r border-gray-800 text-white hidden md:flex">
+    <div className="flex flex-col h-screen w-64 bg-black border-r border-gray-800 text-white">
       {/* Main Navigation */}
       <div className="p-6">
         <div className="flex items-center space-x-2 mb-8">

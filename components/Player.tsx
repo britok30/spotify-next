@@ -283,24 +283,24 @@ const Player = () => {
   }
 
   return (
-    <div className="h-24 bg-gradient-to-r from-gray-900 to-black border-t border-gray-800 px-4 md:px-8">
-      <div className="grid grid-cols-3 h-full items-center">
+    <div className="h-20 md:h-24 bg-gradient-to-r from-gray-900 to-black border-t border-gray-800 px-2 md:px-8">
+      <div className="grid grid-cols-3 md:grid-cols-3 h-full items-center">
         {/* Currently Playing Track */}
-        <div className="flex items-center space-x-4 min-w-0">
+        <div className="flex items-center space-x-2 md:space-x-4 min-w-0">
           {currentTrack && (
             <>
-              <div className="hidden md:block">
+              <div className="hidden sm:block flex-shrink-0">
                 <img
-                  className="h-14 w-14 rounded-md object-cover"
+                  className="h-10 w-10 md:h-14 md:w-14 rounded-md object-cover"
                   src={currentTrack.album?.images?.[0]?.url}
                   alt={`${currentTrack.name} album cover`}
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-white text-sm font-medium truncate">
+                <h4 className="text-white text-xs md:text-sm font-medium truncate">
                   {currentTrack.name}
                 </h4>
-                <p className="text-gray-400 text-xs truncate">
+                <p className="text-gray-400 text-[10px] md:text-xs truncate">
                   {currentTrack.artists
                     ?.map((artist) => artist.name)
                     .join(", ")}
@@ -322,63 +322,63 @@ const Player = () => {
         </div>
 
         {/* Player Controls */}
-        <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center space-x-2">
+        <div className="flex flex-col items-center space-y-1 md:space-y-2">
+          <div className="flex items-center space-x-1 md:space-x-2">
             <Button
               size="icon"
               variant="ghost"
               className={cn(
-                "h-8 w-8 text-gray-400 hover:text-white transition-colors",
+                "hidden sm:flex h-6 w-6 md:h-8 md:w-8 text-gray-400 hover:text-white transition-colors",
                 shuffle && "text-[#18D860]"
               )}
               onClick={handleShuffle}
             >
-              <Shuffle className="h-4 w-4" />
+              <Shuffle className="h-3 w-3 md:h-4 md:w-4" />
             </Button>
 
             <Button
               size="icon"
               variant="ghost"
-              className="h-8 w-8 text-gray-400 hover:text-white transition-colors"
+              className="h-6 w-6 md:h-8 md:w-8 text-gray-400 hover:text-white transition-colors"
               onClick={handlePrevious}
             >
-              <SkipBack className="h-4 w-4" />
+              <SkipBack className="h-3 w-3 md:h-4 md:w-4" />
             </Button>
 
             <Button
               size="icon"
               variant="ghost"
-              className="h-10 w-10 bg-white hover:bg-gray-200 text-black rounded-full transition-all hover:scale-105"
+              className="h-8 w-8 md:h-10 md:w-10 bg-white hover:bg-gray-200 text-black rounded-full transition-all hover:scale-105"
               onClick={handlePlayPause}
             >
               {isPlaying ? (
-                <Pause className="h-5 w-5 fill-current" />
+                <Pause className="h-4 w-4 md:h-5 md:w-5 fill-current" />
               ) : (
-                <Play className="h-5 w-5 fill-current ml-0.5" />
+                <Play className="h-4 w-4 md:h-5 md:w-5 fill-current ml-0.5" />
               )}
             </Button>
 
             <Button
               size="icon"
               variant="ghost"
-              className="h-8 w-8 text-gray-400 hover:text-white transition-colors"
+              className="h-6 w-6 md:h-8 md:w-8 text-gray-400 hover:text-white transition-colors"
               onClick={handleNext}
             >
-              <SkipForward className="h-4 w-4" />
+              <SkipForward className="h-3 w-3 md:h-4 md:w-4" />
             </Button>
 
             <Button
               size="icon"
               variant="ghost"
               className={cn(
-                "h-8 w-8 text-gray-400 hover:text-white transition-colors",
+                "hidden sm:flex h-6 w-6 md:h-8 md:w-8 text-gray-400 hover:text-white transition-colors",
                 repeat !== "off" && "text-[#18D860]"
               )}
               onClick={handleRepeat}
             >
-              <Repeat className="h-4 w-4" />
+              <Repeat className="h-3 w-3 md:h-4 md:w-4" />
               {repeat === "track" && (
-                <span className="absolute text-[10px] font-bold">1</span>
+                <span className="absolute text-[8px] md:text-[10px] font-bold">1</span>
               )}
             </Button>
           </div>
@@ -404,8 +404,8 @@ const Player = () => {
           )}
         </div>
 
-        {/* Volume Control */}
-        <div className="flex items-center justify-end space-x-2">
+        {/* Volume Control - Hidden on small mobile */}
+        <div className="hidden sm:flex items-center justify-end space-x-2">
           <Button
             size="icon"
             variant="ghost"

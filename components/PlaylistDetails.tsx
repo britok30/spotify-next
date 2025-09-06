@@ -39,24 +39,24 @@ const PlaylistDetails = ({ playlist }: PlaylistDetailsProps) => {
     playlist.owner.id === user?.username;
 
   return (
-    <div className="flex items-end space-x-6">
+    <div className="flex flex-col md:flex-row items-center md:items-end space-y-6 md:space-y-0 md:space-x-6">
       {/* Playlist Cover */}
       <div className="relative group flex-shrink-0">
         {playlist.images?.[0]?.url ? (
           <img
-            className="h-56 w-56 shadow-2xl rounded-lg object-cover"
+            className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 shadow-2xl rounded-lg object-cover"
             src={playlist.images[0].url}
             alt={`${playlist.name} cover`}
           />
         ) : (
-          <div className="h-56 w-56 shadow-2xl rounded-lg bg-gray-800 flex items-center justify-center">
-            <Music className="h-20 w-20 text-gray-600" />
+          <div className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 shadow-2xl rounded-lg bg-gray-800 flex items-center justify-center">
+            <Music className="h-12 w-12 md:h-20 md:w-20 text-gray-600" />
           </div>
         )}
       </div>
 
       {/* Playlist Info */}
-      <div className="flex-1 min-w-0 space-y-6">
+      <div className="flex-1 min-w-0 space-y-2 md:space-y-6 text-center md:text-left">
         {/* Playlist Type Badge */}
         <div>
           <p className="text-sm text-white font-medium">
@@ -65,14 +65,14 @@ const PlaylistDetails = ({ playlist }: PlaylistDetailsProps) => {
         </div>
 
         {/* Playlist Title */}
-        <h1 className="font-black text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-white leading-none tracking-tight line-clamp-2 max-w-4xl">
+        <h1 className="font-black text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl text-white leading-none tracking-tight line-clamp-2 max-w-4xl">
           {playlist.name}
         </h1>
 
         {/* Description */}
         {playlist.description && (
           <div
-            className="text-sm text-gray-300 max-w-2xl opacity-70"
+            className="text-xs md:text-sm text-gray-300 max-w-2xl opacity-70 px-4 md:px-0"
             dangerouslySetInnerHTML={{
               __html: playlist.description,
             }}
@@ -80,7 +80,7 @@ const PlaylistDetails = ({ playlist }: PlaylistDetailsProps) => {
         )}
 
         {/* Playlist Metadata */}
-        <div className="flex items-center space-x-1 text-sm text-white">
+        <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-1 text-xs md:text-sm text-white">
           {/* Spotify Icon */}
           <div className="h-6 w-6 bg-[#1DB954] rounded-full flex items-center justify-center mr-2">
             <Music className="h-3 w-3 text-white" />
@@ -109,8 +109,8 @@ const PlaylistDetails = ({ playlist }: PlaylistDetailsProps) => {
 
 // Loading skeleton
 const PlaylistDetailsSkeleton = () => (
-  <div className="flex items-end space-x-6">
-    <Skeleton className="h-56 w-56 rounded-lg bg-gray-800 flex-shrink-0" />
+  <div className="flex flex-col md:flex-row items-center md:items-end space-y-6 md:space-y-0 md:space-x-6">
+    <Skeleton className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 rounded-lg bg-gray-800 flex-shrink-0" />
     <div className="flex-1 space-y-6">
       <Skeleton className="h-4 w-32 bg-gray-800" />
       <Skeleton className="h-20 w-96 bg-gray-800" />

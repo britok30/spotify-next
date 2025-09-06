@@ -139,41 +139,41 @@ const Main = () => {
   }
 
   return (
-    <div className="flex-grow text-white h-screen overflow-y-scroll scrollbar scrollbar-thumb-zinc-400 scrollbar-track-black">
-      <header className="absolute top-5 right-8 z-10">
+    <div className="flex-grow text-white h-full overflow-y-scroll scrollbar scrollbar-thumb-zinc-400 scrollbar-track-black">
+      <header className="hidden md:block absolute top-5 right-8 z-10">
         <UserDropdownMenu />
       </header>
 
       {/* Hero Section with Playlist Details */}
       <section
-        className={`flex items-end bg-gradient-to-b to-black ${color} min-h-[420px] text-white p-8 w-full`}
+        className={`flex items-end bg-gradient-to-b to-black ${color} min-h-[380px] md:min-h-[420px] text-white p-4 pt-20 md:p-8 w-full`}
       >
         <PlaylistDetails playlist={currentPlaylist} />
       </section>
 
       {/* Controls Section */}
       <div className="bg-black/20 backdrop-blur-sm">
-        <div className="flex items-center space-x-4 px-8 py-6">
+        <div className="flex items-center space-x-2 md:space-x-4 px-4 md:px-8 py-4 md:py-6">
           <Button
             size="icon"
             variant="ghost"
-            className="h-16 w-16 rounded-full bg-[#18D860] hover:bg-[#109643] hover:scale-105 transition-all duration-150"
+            className="h-12 w-12 md:h-16 md:w-16 rounded-full bg-[#18D860] hover:bg-[#109643] hover:scale-105 transition-all duration-150"
             onClick={handlePlayPlaylist}
             disabled={!currentPlaylist || isLoadingPlaylist}
           >
             {isPlaying ? (
-              <Pause className="h-8 w-8 text-black fill-current" />
+              <Pause className="h-6 w-6 md:h-8 md:w-8 text-black fill-current" />
             ) : (
-              <Play className="h-8 w-8 text-black fill-current ml-1" />
+              <Play className="h-6 w-6 md:h-8 md:w-8 text-black fill-current ml-0.5 md:ml-1" />
             )}
           </Button>
 
           <Button
             size="icon"
             variant="ghost"
-            className="h-10 w-10 text-gray-400 hover:text-white hover:scale-105 transition-all duration-150"
+            className="h-8 w-8 md:h-10 md:w-10 text-gray-400 hover:text-white hover:scale-105 transition-all duration-150"
           >
-            <Download className="h-6 w-6" />
+            <Download className="h-5 w-5 md:h-6 md:w-6" />
           </Button>
 
           <DropdownMenu>
@@ -181,9 +181,9 @@ const Main = () => {
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-10 w-10 text-gray-400 hover:text-white hover:scale-105 transition-all duration-150"
+                className="h-8 w-8 md:h-10 md:w-10 text-gray-400 hover:text-white hover:scale-105 transition-all duration-150"
               >
-                <MoreHorizontal className="h-6 w-6" />
+                <MoreHorizontal className="h-5 w-5 md:h-6 md:w-6" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-gray-800 border-gray-700">

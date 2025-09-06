@@ -141,7 +141,7 @@ const Song = ({ order, track }: SongProps) => {
   return (
     <div
       className={cn(
-        "group grid grid-cols-[16px_4fr_2fr_minmax(120px,_1fr)] gap-4 items-center px-4 py-2 rounded-md transition-colors cursor-pointer",
+        "group grid grid-cols-[16px_1fr_minmax(80px,_auto)] md:grid-cols-[16px_4fr_2fr_minmax(120px,_1fr)] gap-2 md:gap-4 items-center px-2 md:px-4 py-2 rounded-md transition-colors cursor-pointer",
         "hover:bg-white/5",
         isCurrentTrack && "bg-white/10"
       )}
@@ -177,8 +177,8 @@ const Song = ({ order, track }: SongProps) => {
       </div>
 
       {/* Track Info */}
-      <div className="flex items-center space-x-3 min-w-0">
-        <div className="relative group/image">
+      <div className="flex items-center space-x-2 md:space-x-3 min-w-0">
+        <div className="relative group/image flex-shrink-0">
           {track.album?.images?.[0]?.url ? (
             <img
               className="h-10 w-10 rounded object-cover"
@@ -195,13 +195,15 @@ const Song = ({ order, track }: SongProps) => {
         <div className="min-w-0 flex-1">
           <p
             className={cn(
-              "text-sm font-medium truncate",
+              "text-xs md:text-sm font-medium",
+              "line-clamp-1 md:truncate", // Allow 1 line on mobile, truncate on desktop
               isCurrentTrack ? "text-[#18D860]" : "text-white"
             )}
+            title={track.name} // Show full name on hover
           >
             {track.name}
           </p>
-          <p className="text-sm text-gray-400 truncate">
+          <p className="text-[10px] md:text-sm text-gray-400 truncate">
             {track.artists?.map((artist) => artist.name).join(", ")}
           </p>
         </div>
@@ -215,12 +217,12 @@ const Song = ({ order, track }: SongProps) => {
       </div>
 
       {/* Actions & Duration */}
-      <div className="flex items-center justify-end space-x-2">
+      <div className="flex items-center justify-end space-x-1 md:space-x-2">
         <Button
           size="icon"
           variant="ghost"
           className={cn(
-            "h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity",
+            "h-8 w-8 hidden md:flex opacity-0 group-hover:opacity-100 transition-opacity",
             isLiked
               ? "text-[#18D860] opacity-100"
               : "text-gray-400 hover:text-white"
@@ -232,7 +234,7 @@ const Song = ({ order, track }: SongProps) => {
 
         <span
           className={cn(
-            "text-sm tabular-nums",
+            "text-[11px] md:text-sm tabular-nums",
             isCurrentTrack ? "text-[#18D860]" : "text-gray-400"
           )}
         >
@@ -244,10 +246,10 @@ const Song = ({ order, track }: SongProps) => {
             <Button
               size="icon"
               variant="ghost"
-              className="h-8 w-8 text-gray-400 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              className="h-6 w-6 md:h-8 md:w-8 text-gray-400 hover:text-white md:opacity-0 md:group-hover:opacity-100 transition-opacity"
               onClick={(e) => e.stopPropagation()}
             >
-              <MoreHorizontal className="h-4 w-4" />
+              <MoreHorizontal className="h-3 w-3 md:h-4 md:w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
